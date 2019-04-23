@@ -1,5 +1,6 @@
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
+import exampleVideoData from '../data/exampleVideoData.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -7,28 +8,16 @@ class App extends React.Component {
 
     this.state = {
       //keep track of all the videos in the video list
-      videoList: this.props.videos,
+      videoList: exampleVideoData,
       //current video in the video player
-      currentVideo: this.props.videos[0]
+      currentVideo: exampleVideoData[0]
     };
   }
 
-
-  //click event on video list entry title
-  //class ="video-list-entry-title"
-  //display the clicked video in the video player
-
-  //onClick function ()
-  //which sets the state of the videoList and currentVideo
-
-
-  //Need to Know:
-  //how to get the index of the clicked video
-  //Where to pass the onClick function
-
-  handleClick() {
-    console.log('VideoListEntry Clicked');
-    //change the state of videoList and currentVideo(videoPlayer)
+  renderVideosOnClick(video) {
+    this.setState({
+      currentVideo: video
+    });
   }
 
   render() {
@@ -43,7 +32,7 @@ class App extends React.Component {
             <VideoPlayer video={this.state.currentVideo} />
           </div>
           <div className="col-md-5">
-            <VideoList videos={this.state.videoList} onClick={this.handleClick} />
+            <VideoList videos={this.state.videoList} clickVideoTitle={this.renderVideosOnClick.bind(this)} />
           </div>
         </div>
       </div>
@@ -56,10 +45,3 @@ class App extends React.Component {
 //adding a comment for babel
 export default App;
 
-//click event on video list entry title
-  //class ="video-list-entry-title"
-//display the clicked video in the video player
-
-//onClick function ()
-  //which sets the state of the videoList and currentVideo
-//how to get the index of the clicked video
