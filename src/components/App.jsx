@@ -1,34 +1,55 @@
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
+import Search from './Search.js';
 import exampleVideoData from '../data/exampleVideoData.js';
-import searchYouTube from '../lib/searchYouTube.js';
+import YOUTUBE_API_KEY from '../config/youtube.js';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.options = {
-      q: '',
-      maxResults: 5,
-      key: 'AIzaSyB7nE98Y9Lx4HOez5OfALDkifOULeAoues'
-    };
-
     this.state = {
       //keep track of all the videos in the video list
       videoList: exampleVideoData,
       //current video in the video player
-      currentVideo: exampleVideoData[0]
+      currentVideo: exampleVideoData[0],
+      //default query search term
+      query: 'Cute cat videos'
     };
+
+    this.liveSearch = _.debounce(this.getYouTubeVideos, 500);
   }
 
-  renderAPIData(data) {
-    this.setState({
-      videoList: data.items,
-      currentVideo: data.items[0]
+  componentDidMount() {
+    this.getYouTubeVideos();
+  }
+
+  getYouTubeVideos() {
+    var options = {
+      key: YOUTUBE_API_KEY,
+      query: this.state.query,
+      max: 5
+    };
+
+    this.props.searchYouTube(options, (data) => {
+      this.setState({
+        videos: data,
+        currentVideo: data[0],
+      });
     });
   }
 
-  // searchYouTube(options, renderAPIData)
+  handleChange(event) {
+    this.setState({
+      query: event.target.value
+    });
+
+    this.liveSearch();
+  }
+
+  handleSubmit() {
+    this.getYouTubeVideos();
+  }
 
   renderVideosOnClick(video) {
     this.setState({
@@ -45,7 +66,7 @@ class App extends React.Component {
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <Search options={this.options} renderAPIData={this.renderAPIData} />
+            <Search handleChange={this.handleChange.bind(this)} handleSubmit={this.handleSubmit.bind(this)} /> 
           </div>
         </nav>
         <div className="row">
